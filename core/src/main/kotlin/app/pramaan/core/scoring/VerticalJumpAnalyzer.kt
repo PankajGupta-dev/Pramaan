@@ -342,6 +342,7 @@ class VerticalJumpAnalyzer(
 
         val validAttempts = attempts.filter { it.valid }
         val bestAttempt = validAttempts.maxByOrNull { it.flightCm }
+            ?: attempts.filter { it.flightTimeSeconds >= MIN_FLIGHT_TIME_SECONDS }.maxByOrNull { it.flightCm }
 
         return JumpResult(
             attempts = attempts.toList(),

@@ -1,10 +1,13 @@
 package app.pramaan.core.manifest
 
+import app.pramaan.core.crypto.Base64Url
+import app.pramaan.core.crypto.Sha256
 import kotlinx.serialization.Serializable
 
 /**
  * QR type S: Coach phone -> Witness phone.
  * Encodes summary of the session signed by the coach's device key.
+ * Includes coach public key (cpk) so witness can verify offline without trust infrastructure.
  */
 @Serializable
 data class SessionQrPayload(
@@ -13,7 +16,8 @@ data class SessionQrPayload(
     val test: String,
     val best: Double,
     val unit: String,
-    val ini: String
+    val ini: String,
+    val cpk: String = ""
 )
 
 /**
@@ -38,7 +42,16 @@ data class WitnessAttestation(
     val wpk: String,
     val t: Long,
     val sig: String
-)
+) {
+    /**
+     * First 8 hex characters of SHA-256 hash of witness public key (wit claim in cert).
+     */
+    val witnessShortId: String
+        get() {
+            val digest = Sha256.digest(Base64Url.decode(wpk))
+            return digest.take(4).joinToString("") { "%02x".format(it) }
+        }
+}
 
 /**
  * Helper for encoding/decoding QR payload strings formatted as:

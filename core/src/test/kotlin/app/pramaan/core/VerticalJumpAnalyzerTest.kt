@@ -62,6 +62,24 @@ class VerticalJumpAnalyzerTest {
         attempt.gravity shouldBe (2.45 plusOrMinus 0.5)
         (attempt.gravity < 7.31) shouldBe true
     }
+    
+    @Test
+    fun `T2b long jump slowed down yielding flight over 1_0s still reports estimated gravity and fails C2`() {
+        val genuineTrack = SyntheticTracks.countermovementJump(
+            flightTimeSeconds = 0.550,
+            fps = fps,
+            heightCm = heightCm,
+            noiseStdDev = 0.0
+        )
+        // 0.55s * 2.0 = 1.10s flight time
+        val slowedTrack = SyntheticTracks.scaleTimestamps(genuineTrack, factor = 2.0)
+
+        val result = VerticalJumpAnalyzer.analyze(slowedTrack, heightCm)
+
+        result.attempts.size shouldBe 1
+        result.bestGravity shouldBe (2.45 plusOrMinus 0.5)
+        (result.bestGravity < 7.31) shouldBe true
+    }
 
     @Test
     fun `T3 sped-up video with timestamps x0_5 yields g_est about 39 and fails C2`() {

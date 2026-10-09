@@ -18,7 +18,18 @@ dependencies {
     implementation(project(":core"))
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)
+    implementation(libs.ktor.server.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.server.html.builder)
     implementation(libs.logback.classic)
+
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.dao)
+    implementation(libs.exposed.jdbc)
+    implementation(libs.sqlite.jdbc)
+
+    implementation(libs.nimbus.jose.jwt)
+    implementation(libs.kotlinx.html.jvm)
 
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.kotest.assertions.core)

@@ -27,7 +27,8 @@ import java.util.Locale
  * - Deterministic UTF-8 byte output
  */
 object CanonicalJson {
-    private val json = Json {
+    @PublishedApi
+    internal val json = Json {
         encodeDefaults = true
         ignoreUnknownKeys = true
     }
@@ -47,6 +48,22 @@ object CanonicalJson {
 
     fun <T> encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray {
         return encodeToString(serializer, value).toByteArray(Charsets.UTF_8)
+    }
+
+    inline fun <reified T> decodeFromString(string: String): T {
+        return json.decodeFromString(string)
+    }
+
+    fun <T> decodeFromString(deserializer: kotlinx.serialization.DeserializationStrategy<T>, string: String): T {
+        return json.decodeFromString(deserializer, string)
+    }
+
+    inline fun <reified T> decodeFromByteArray(bytes: ByteArray): T {
+        return json.decodeFromString(bytes.decodeToString())
+    }
+
+    fun <T> decodeFromByteArray(deserializer: kotlinx.serialization.DeserializationStrategy<T>, bytes: ByteArray): T {
+        return json.decodeFromString(deserializer, bytes.decodeToString())
     }
 
     fun format(element: JsonElement): String = buildString {
